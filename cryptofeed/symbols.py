@@ -52,19 +52,26 @@ class Symbol:
             day = date.day
             return f"{year}{month}{day}"
 
-        if len(date) == 4:
-            year = str(dt.utcnow().year)[2:]
-            date = year + date
-        if len(date) == 6:
-            year = date[:2]
-            month = Symbol.month_code(date[2:4])
-            day = date[4:]
-            return f"{year}{month}{day}"
-        if len(date) == 9 or len(date) == 7:
-            year, month, day = date[-2:], date[2:5], date[:2]
+        if isinstance(date, str):
             months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
-            month = Symbol.month_code(months.index(month) + 1)
-            return f"{year}{month}{day}"
+            if len(date) == 4:
+                year = str(dt.utcnow().year)[2:]
+                date = year + date
+            if len(date) == 6:
+                month = date[1:4]
+                if month.upper() in months:
+                    year = date[-2:]
+                    month = Symbol.month_code(months.index(month) + 1)
+                    day = date[:1]
+                else:
+                    year = date[:2]
+                    month = Symbol.month_code(date[2:4])
+                    day = date[4:]
+                return f"{year}{month}{day}"
+            if len(date) == 9 or len(date) == 7:
+                year, month, day = date[-2:], date[2:5], date[:2]
+                month = Symbol.month_code(months.index(month) + 1)
+                return f"{year}{month}{day}"
 
         raise ValueError(f"Unable to parse expiration date: {date}")
 
