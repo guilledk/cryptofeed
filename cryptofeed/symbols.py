@@ -29,7 +29,9 @@ class Symbol:
         self.strike_price = strike_price
 
         if expiry_date and expiry_normalize:
-            self.expiry_date = self.date_format(expiry_date)
+            expiry_date = self.date_format(expiry_date)
+
+        self.expiry_date = expiry_date
 
     def __repr__(self) -> str:
         return self.normalized
