@@ -7,7 +7,13 @@ associated with this software.
 from datetime import datetime as dt, timezone
 from typing import Dict, Tuple, Union
 
-from cryptofeed.defines import FUTURES, FX, OPTION, PERPETUAL, SPOT, CALL, PUT, CURRENCY
+from cryptofeed.defines import (
+    FUTURES, FUTURE_COMBO, 
+    FX,
+    OPTION, OPTION_COMBO, CALL, PUT,
+    PERPETUAL,
+    SPOT, CURRENCY
+)
 
 
 class Symbol:
@@ -19,7 +25,7 @@ class Symbol:
                 raise ValueError("option_type must be either CALL or PUT")
             if strike_price is None:
                 raise ValueError("Missing value for strike_price")
-        if type in (FUTURES, OPTION) and expiry_date is None:
+        if type in (FUTURES, FUTURE_COMBO, OPTION, OPTION_COMBO) and expiry_date is None:
             raise ValueError("Missing value for expiry_date")
 
         self.quote = quote
@@ -85,9 +91,9 @@ class Symbol:
             base = f"{self.base}{self.symbol_sep}{self.quote}"
         if self.type == SPOT:
             return base
-        if self.type == OPTION:
+        if self.type == OPTION or self.type == OPTION_COMBO:
             return f"{base}{self.symbol_sep}{self.strike_price}{self.symbol_sep}{self.expiry_date}{self.symbol_sep}{self.option_type}"
-        if self.type == FUTURES:
+        if self.type == FUTURES or self.type == FUTURE_COMBO:
             return f"{base}{self.symbol_sep}{self.expiry_date}"
         if self.type == PERPETUAL:
             return f"{base}{self.symbol_sep}PERP"
